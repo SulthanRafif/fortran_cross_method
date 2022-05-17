@@ -1,1 +1,4 @@
-Creating executable: D:\RAFIF TITIP\PROJECT ANDRA FORTRAN TUGAS BESAR\CrossMethod.EXE
+D:\Mas Rafif Titip\Fortran Projects\TugasAndra\fortran_cross_method\CrossMethod.F95(164) : warning 1220 - A 32 bit INTEGER has been converted to REAL with a 24 bit mantissa
+[SLINK64 v3.02, Copyright (c) Silverfrost Ltd. 2015-2021]
+Loading D:\Mas Rafif Titip\Fortran Projects\TugasAndra\fortran_cross_method\lgotemp@.obj
+Creating executable file D:\Mas Rafif Titip\Fortran Projects\TugasAndra\fortran_cross_method\CrossMethod.exe

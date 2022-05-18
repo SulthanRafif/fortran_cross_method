@@ -3,15 +3,15 @@ program cross_method
   implicit none
 
   integer :: jumlah_sambungan, jumlah_batang, jumlah_siklus
-  integer :: sambungan_ke, batang_ke, siklus_ke
+  integer :: sambungan_ke, batang_ke, siklus_ke, perubahan_ke, setengah_perubahan_ke
   integer :: indeks_nilai_kekakuan, indeks_nilai_faktor_distribusi, indeks_nilai_fem, indeks_balance, indeks_co
   integer, allocatable, dimension(:) :: batang
-  real, allocatable, dimension(:) :: nilai_kekakuan, faktor_distribusi, fem 
-  real, allocatable, dimension(:) :: balance, list_co, momen_ujung_total
-  integer :: balance_count_helper, co_count_helper
+  real, allocatable, dimension(:) :: nilai_kekakuan, faktor_distribusi, fem, fem_awal 
+  real, allocatable, dimension(:) :: balance, list_co, momen_ujung_total, list_perubahan, list_setengah_perubahan, jumlah, theta
+  integer :: balance_count_helper, co_count_helper, setengah_perubahan_count_helper
   integer :: negative_number
  
-  real :: balance_a, balance_b, co
+  real :: balance_a, balance_b, co, perubahan, setengah_perubahan
   integer :: indeks
   
   jumlah_sambungan = 3
@@ -34,6 +34,7 @@ program cross_method
 
   balance_count_helper = 1
   co_count_helper = 1
+  setengah_perubahan_count_helper = 1
   negative_number = -1
 
   allocate(nilai_kekakuan(jumlah_batang))
@@ -43,6 +44,11 @@ program cross_method
   allocate(balance(jumlah_batang))
   allocate(list_co(jumlah_batang))
   allocate(momen_ujung_total(jumlah_batang))
+  allocate(fem_awal(jumlah_batang))
+  allocate(list_perubahan(jumlah_batang))
+  allocate(list_setengah_perubahan(jumlah_batang))
+  allocate(jumlah(jumlah_batang))
+  allocate(theta(jumlah_batang))
 
   do sambungan_ke = 1, jumlah_sambungan
     print*,'Sambungan Ke - ', sambungan_ke
@@ -79,6 +85,7 @@ program cross_method
 		print*,'Masukkan Nilai fem Untuk Batang Ke - ', batang_ke
         read*, fem(indeks_nilai_fem)
 
+        fem_awal(indeks_nilai_fem) =  fem(indeks_nilai_fem) 
         momen_ujung_total(indeks_nilai_fem) = fem(indeks_nilai_fem)  
         
         indeks_nilai_fem = indeks_nilai_fem + 1
@@ -151,7 +158,26 @@ program cross_method
   end do
   
   print*,'Momen Ujung Total ', momen_ujung_total
+  print*,'Nilai FEM Awal ', fem_awal
   
+  do perubahan_ke = 1, jumlah_batang
+    list_perubahan(perubahan_ke) = perubahan(fem_awal(perubahan_ke), momen_ujung_total(perubahan_ke))
+  end do  
+
+  do setengah_perubahan_ke = 1, jumlah_batang
+    indeks = setengah_perubahan_ke + setengah_perubahan_count_helper
+    list_setengah_perubahan(setengah_perubahan_ke) = setengah_perubahan(list_perubahan(indeks))
+    setengah_perubahan_count_helper = setengah_perubahan_count_helper * negative_number
+
+    jumlah(setengah_perubahan_ke) = list_perubahan(setengah_perubahan_ke) + list_setengah_perubahan(setengah_perubahan_ke)
+    theta(setengah_perubahan_ke) = (jumlah(setengah_perubahan_ke) / nilai_kekakuan(setengah_perubahan_ke)) * negative_number
+  end do 
+    
+  print*,'Nilai Perubahan ', list_perubahan
+  print*,'Nilai Setengah Perubahan ', list_setengah_perubahan
+  print*,'Nilai Jumlah ', jumlah
+  print*,'Nilai Theta ', theta
+
 end program cross_method  
 
 function balance_a(fem, faktor_distribusi)
@@ -183,5 +209,27 @@ function co(balance)
   ! perhitungan CO
   co = balance / 2
 
+end function
+
+function perubahan(fem, momen_ujung_total)
+  implicit none
+    
+  integer :: negative_number = -1
+  real :: fem, momen_ujung_total, perubahan
+  
+  ! perhitungan perubahan
+  perubahan = (fem - momen_ujung_total) / negative_number
+  
+end function 
+
+function setengah_perubahan(perubahan)
+  implicit none
+
+  real :: perubahan, setengah_perubahan
+  integer :: negative_number = -1
+
+  ! perhitungan setengah perubahan
+  setengah_perubahan = (perubahan / 2) * negative_number
+  
 end function
 

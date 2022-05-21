@@ -1,1 +1,1 @@
-FTN95.EXE "D:\Mas Rafif Titip\Fortran Projects\TugasAndra\fortran_cross_method\CrossMethod.f95" /64 /NO_BANNER /VS7 /DELETE_OBJ_ON_ERROR /ERROR_NUMBERS /UNLIMITED_ERRORS /CHECKMATE
+FTN95.EXE "D:\Mas Rafif Titip\Fortran Projects\TugasAndra\fortran_cross_method\CrossMethod.f95" /64 /NO_BANNER /VS7 /DELETE_OBJ_ON_ERROR /ERROR_NUMBERS /UNLIMITED_ERRORS /LINK /CHECKMATE

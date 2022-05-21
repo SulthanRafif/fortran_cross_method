@@ -10,12 +10,35 @@ program cross_method
   real, allocatable, dimension(:) :: balance, list_co, momen_ujung_total, list_perubahan, list_setengah_perubahan, jumlah, theta
   integer :: balance_count_helper, co_count_helper, setengah_perubahan_count_helper
   integer :: negative_number
+  logical :: input = .TRUE., tambah_siklus = .TRUE.
+  character (len = 40) :: input_tambah_siklus 
  
   real :: balance_a, balance_b, co, perubahan, setengah_perubahan
   integer :: indeks
   
-  jumlah_sambungan = 3
-  jumlah_siklus = 5 
+  jumlah_batang = 0
+
+  do while (input)
+     print*,'Masukkan jumlah sambungan '
+     read*, jumlah_sambungan
+     allocate(batang(jumlah_sambungan))
+
+     do sambungan_ke = 1, jumlah_sambungan
+        print*, 'Masukkan jumlah batang untuk sambungan ke - ', sambungan_ke
+        read*, batang(sambungan_ke)
+        jumlah_batang = jumlah_batang + batang(sambungan_ke)
+     end do
+
+     if (modulo(jumlah_batang, 2) == 0) then
+       input = .FALSE.
+     else if (modulo(jumlah_batang, 2) /= 0) then
+       input = .TRUE. 
+       print*,'Jumlah semua batang yang dimiliki semua sambungan tidak boleh ganjil' 
+     end if  
+  end do
+
+  print*,'Masukkan jumlah siklus perhitungan'
+  read*,jumlah_siklus
   
   indeks_nilai_kekakuan = 1
   indeks_nilai_faktor_distribusi = 1
@@ -24,14 +47,6 @@ program cross_method
   indeks_balance = 1
   indeks_co = 1
   
-  allocate(batang(3))	
-
-  batang(1) = 1
-  batang(2) = 2
-  batang(3) = 1
-
-  jumlah_batang = batang(1) + batang(2) + batang(3)
-
   balance_count_helper = 1
   co_count_helper = 1
   setengah_perubahan_count_helper = 1
@@ -94,7 +109,8 @@ program cross_method
 
   print*,'Nilai FEM untuk semua batang: ',fem
 
-  do siklus_ke = 1, jumlah_siklus
+  do while (tambah_siklus)
+   do siklus_ke = 1, jumlah_siklus
     print*,'Siklus Ke - ', siklus_ke
     if (siklus_ke > 1)  then
         do sambungan_ke = 1, jumlah_sambungan
@@ -154,7 +170,7 @@ program cross_method
     indeks_co = 1
     
     print*,'Nilai balance untuk siklus ke ', siklus_ke
-    print*,balance 
+    print*,balance    
   end do
   
   print*,'Momen Ujung Total ', momen_ujung_total
@@ -177,6 +193,19 @@ program cross_method
   print*,'Nilai Setengah Perubahan ', list_setengah_perubahan
   print*,'Nilai Jumlah ', jumlah
   print*,'Nilai Theta ', theta
+
+  print*,'Apakah anda ingin menambah siklus? (iya/tidak)'
+  read*,input_tambah_siklus
+
+  if (input_tambah_siklus == 'tidak') then
+    tambah_siklus = .FALSE.
+  else if (input_tambah_siklus == 'iya') then  
+    tambah_siklus = .TRUE.
+    print*,'Masukkan jumlah siklus yang ingin ditambahkan'
+    read*,jumlah_siklus
+  end if  
+
+  end do
 
 end program cross_method  
 
@@ -232,4 +261,6 @@ function setengah_perubahan(perubahan)
   setengah_perubahan = (perubahan / 2) * negative_number
   
 end function
+
+
 
